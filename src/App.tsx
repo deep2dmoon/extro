@@ -247,9 +247,8 @@ function App() {
         </div>
       </section>
 
-      {/* Message Section */}
       <section id="wishes" className="py-32 md:py-64 bg-black/40 backdrop-blur-xl">
-        <Envelope message="May your year be as extraordinary as your soul. Happy Birthday, Aramide! ❤️" />
+        <Envelope message="Wishing you a day filled with boundless joy and a year of extraordinary wins. May your path as a trader be paved with success and more pips to your portfolio. Happy Birthday! 📈✨" />
       </section>
 
       {/* Final Footer */}
