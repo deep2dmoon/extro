@@ -41,21 +41,24 @@ export const Envelope = ({ message }: EnvelopeProps) => {
                             damping: 18,
                             delay: isOpen ? 0.3 : 0
                         }}
-                        className="absolute inset-x-4 sm:inset-x-8 top-6 bg-[#1a1a1a] p-8 sm:p-12 rounded-sm shadow-[0_50px_100px_rgba(0,0,0,0.5)] border border-white/5 flex flex-col items-center justify-center min-h-[300px] sm:min-h-[350px] backdrop-blur-xl"
+                        className="absolute inset-x-4 sm:inset-x-8 top-6 bg-[#1a1a1a] p-6 sm:p-10 rounded-sm shadow-[0_50px_100px_rgba(0,0,0,0.5)] border border-white/5 flex flex-col items-center min-h-[300px] sm:min-h-[350px] max-h-[400px] sm:max-h-[500px] backdrop-blur-xl"
                     >
-                        <motion.div
-                            animate={{ scale: [1, 1.2, 1] }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                        >
-                            <Heart className="text-pink-600 mb-8 fill-pink-600/20" size={32} />
-                        </motion.div>
-                        <p className="text-white/90 font-serif italic text-2xl sm:text-3xl text-center leading-relaxed">
-                            "{message}"
-                        </p>
-                        <div className="mt-12 w-full flex justify-between items-center opacity-20">
-                            <div className="h-px w-8 bg-white" />
-                            <span className="text-[10px] uppercase tracking-[0.5em]">confidential</span>
-                            <div className="h-px w-8 bg-white" />
+                        <div className="w-full overflow-y-auto pr-2 custom-scrollbar flex flex-col items-center">
+                            <motion.div
+                                animate={{ scale: [1, 1.2, 1] }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                                className="shrink-0"
+                            >
+                                <Heart className="text-pink-600 mb-8 fill-pink-600/20" size={32} />
+                            </motion.div>
+                            <p className="text-white/90 font-serif italic text-xl sm:text-2xl text-center leading-relaxed mb-8">
+                                "{message}"
+                            </p>
+                            <div className="mt-auto w-full flex justify-between items-center opacity-20 shrink-0">
+                                <div className="h-px w-8 bg-white" />
+                                <span className="text-[10px] uppercase tracking-[0.5em]">confidential</span>
+                                <div className="h-px w-8 bg-white" />
+                            </div>
                         </div>
                     </motion.div>
 
