@@ -34,14 +34,14 @@ export const Envelope = ({ message }: EnvelopeProps) => {
                     {/* Letter */}
                     <motion.div
                         initial={{ y: 0, opacity: 0 }}
-                        animate={isOpen ? { y: -350, opacity: 1, scale: 1.08, rotate: -1 } : { y: 0, opacity: 0, scale: 0.95, rotate: 0 }}
+                        animate={isOpen ? { y: -350, opacity: 1, scale: 1.08, rotate: -1, zIndex: 40 } : { y: 0, opacity: 0, scale: 0.95, rotate: 0, zIndex: 15 }}
                         transition={{
                             type: "spring",
                             stiffness: 80,
                             damping: 18,
                             delay: isOpen ? 0.3 : 0
                         }}
-                        className="absolute inset-x-4 sm:inset-x-8 top-6 bg-[#1a1a1a] p-8 sm:p-12 rounded-sm shadow-[0_50px_100px_rgba(0,0,0,0.5)] z-[15] border border-white/5 flex flex-col items-center justify-center min-h-[300px] sm:min-h-[350px] backdrop-blur-xl"
+                        className="absolute inset-x-4 sm:inset-x-8 top-6 bg-[#1a1a1a] p-8 sm:p-12 rounded-sm shadow-[0_50px_100px_rgba(0,0,0,0.5)] border border-white/5 flex flex-col items-center justify-center min-h-[300px] sm:min-h-[350px] backdrop-blur-xl"
                     >
                         <motion.div
                             animate={{ scale: [1, 1.2, 1] }}
