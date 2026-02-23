@@ -1,195 +1,295 @@
-import { motion } from 'framer-motion';
-import { PartyPopper, Heart, Calendar, MessageSquare } from 'lucide-react';
-import { useEffect } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { PartyPopper, Heart, Calendar, MessageSquare, ChevronDown } from 'lucide-react';
+import { useEffect, useRef } from 'react';
 import { triggerConfetti } from './components/Confetti';
 import { Envelope } from './components/Envelope';
 import './App.css';
 
+// Asset Imports
+import img0 from './assets/IMG-20260223-WA0000.jpg';
+import img1 from './assets/IMG-20260223-WA0001.jpg';
+import img2 from './assets/IMG-20260223-WA0002.jpg';
+import img3 from './assets/IMG-20260223-WA0003.jpg';
+
+const MeshBackground = () => (
+  <div className="mesh-container">
+    <div className="mesh-ball top-[-20%] left-[-10%] bg-[#2d1b69]" />
+    <div className="mesh-ball top-[40%] right-[-10%] bg-[#ff0055] [animation-delay:-5s]" />
+    <div className="mesh-ball bottom-[-10%] left-[20%] bg-[#c9a227] [animation-delay:-10s]" />
+  </div>
+);
+
+const CharacterReveal = ({ text, className, delay = 0, style }: { text: string; className?: string; delay?: number; style?: React.CSSProperties }) => {
+  return (
+    <span className={className} style={style}>
+      {Array.from(text).map((char, i) => (
+        <motion.span
+          key={i}
+          initial={{ y: "100%", opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{
+            duration: 1.2,
+            delay: delay + i * 0.04,
+            ease: [0.22, 1, 0.36, 1]
+          }}
+          className="inline-block whitespace-pre"
+        >
+          {char}
+        </motion.span>
+      ))}
+    </span>
+  );
+};
+
+const CustomCursor = () => {
+  const cursorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const moveCursor = (e: MouseEvent) => {
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+      }
+    };
+    window.addEventListener('mousemove', moveCursor);
+    return () => window.removeEventListener('mousemove', moveCursor);
+  }, []);
+
+  return (
+    <div
+      ref={cursorRef}
+      className="fixed top-0 left-0 w-8 h-8 border border-white/30 rounded-full pointer-events-none z-[9999] mix-blend-difference transition-transform duration-100 ease-out hidden md:block"
+      style={{ marginLeft: '-16px', marginTop: '-16px' }}
+    />
+  );
+};
+
 function App() {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll();
+  const y = useTransform(scrollYProgress, [0, 1], [0, -200]);
+
   useEffect(() => {
     triggerConfetti();
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#fafafa] selection:bg-purple-200 bg-grain">
+    <div ref={containerRef} className="min-h-screen selection:bg-pink-500/30 bg-grain text-white overflow-x-hidden cursor-none">
+      <CustomCursor />
+      <MeshBackground />
+
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: {
-              opacity: 1,
-              transition: { staggerChildren: 0.3 }
-            }
-          }}
-          className="text-center z-10 px-4"
-        >
+      <section className="relative min-h-[100svh] flex flex-col items-center justify-center p-6 md:p-12 overflow-hidden">
+        <div className="w-full max-w-[1600px] mx-auto z-10">
           <motion.div
-            variants={{
-              hidden: { scale: 0, rotate: -180 },
-              visible: { scale: 1, rotate: 0 }
-            }}
-            transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            className="inline-block p-6 rounded-full bg-white shadow-2xl text-purple-600 mb-8 border border-purple-100"
-          >
-            <PartyPopper size={56} className="animate-bounce" />
-          </motion.div>
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 1.5, ease: [0.87, 0, 0.13, 1] }}
+            className="w-16 md:w-24 h-px bg-white/30 mb-8 md:mb-16 origin-left"
+          />
 
-          <motion.h1
-            variants={{
-              hidden: { y: 40, opacity: 0 },
-              visible: { y: 0, opacity: 1 }
-            }}
-            className="text-7xl md:text-9xl premium-text mb-6 font-black tracking-tight"
-          >
-            Happy <br className="md:hidden" /> Birthday!
-          </motion.h1>
+          <div className="relative">
+            <h1 className="text-[clamp(3.5rem,15vw,14rem)] leading-[0.85] md:leading-[0.8] font-black uppercase tracking-tighter mb-4">
+              <CharacterReveal text="Happy" className="block" />
+              <div className="flex flex-wrap items-baseline">
+                <CharacterReveal text="Birthday" className="block text-transparent" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.6)' } as any} />
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 1, type: "spring" }}
+                  className="text-[0.25em] md:text-[0.2em] font-serif italic lowercase tracking-normal text-pink-500 ml-2 md:ml-4"
+                >
+                  to you
+                </motion.span>
+              </div>
+            </h1>
+          </div>
 
-          <motion.p
-            variants={{
-              hidden: { y: 20, opacity: 0 },
-              visible: { y: 0, opacity: 1 }
-            }}
-            className="text-xl md:text-3xl text-gray-500 font-light tracking-[0.2em] mb-12 uppercase"
-          >
-            Aramide <span className="font-bold text-gray-900 mx-2">Blessings</span> Extrofret
-          </motion.p>
-
-          <motion.button
-            variants={{
-              hidden: { scale: 0.8, opacity: 0 },
-              visible: { scale: 1, opacity: 1 }
-            }}
-            whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(109, 40, 217, 0.2)" }}
-            whileTap={{ scale: 0.95 }}
-            onClick={triggerConfetti}
-            className="px-10 py-5 bg-purple-600 text-white rounded-2xl font-bold shadow-2xl hover:bg-purple-700 transition-all flex items-center gap-3 mx-auto group"
-          >
-            Celebrate Again
-            <Heart size={24} className="group-hover:fill-current transition-all animate-pulse" />
-          </motion.button>
-        </motion.div>
-
-        {/* Dynamic Background Elements */}
-        <div className="absolute inset-0 pointer-events-none opacity-40">
-          {[...Array(12)].map((_, i) => (
+          <div className="flex flex-col md:flex-row items-start md:items-end justify-between mt-8 md:mt-12 gap-8 md:gap-12">
             <motion.div
-              key={i}
-              className="absolute bg-gradient-to-br from-purple-200 to-pink-100 rounded-full blur-[100px]"
-              animate={{
-                x: [0, (i % 2 === 0 ? 100 : -100), 0],
-                y: [0, (i % 3 === 0 ? 150 : -50), 0],
-                scale: [1, 1.2, 1],
-              }}
-              transition={{
-                duration: 15 + i,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              style={{
-                width: `${100 + Math.random() * 300}px`,
-                height: `${100 + Math.random() * 300}px`,
-                left: `${(i * 15) % 100}%`,
-                top: `${(i * 25) % 100}%`,
-              }}
-            />
-          ))}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.2, duration: 1 }}
+              className="max-w-md"
+            >
+              <p className="text-base md:text-xl font-light text-white/60 leading-relaxed tracking-wide">
+                Dedicated to the one who makes every moment <span className="text-white font-medium">unforgettable</span>. Your light shines brighter than any star.
+              </p>
+            </motion.div>
+
+            <div className="text-left md:text-right">
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1.4, duration: 1 }}
+                className="mb-6 md:mb-8"
+              >
+                <span className="text-[10px] uppercase tracking-[0.6em] text-white/40 block mb-2">Honoring</span>
+                <span className="text-2xl md:text-5xl font-serif italic text-white leading-none block">Aramide Blessings</span>
+                <span className="text-lg md:text-2xl font-black uppercase tracking-widest text-pink-500 block mt-1">Extrofret</span>
+              </motion.div>
+
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.6 }}
+                whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(236, 72, 153, 0.4)" }}
+                whileTap={{ scale: 0.95 }}
+                onClick={triggerConfetti}
+                className="group relative px-10 py-5 md:px-14 md:py-7 rounded-full bg-gradient-to-r from-pink-600 via-purple-600 to-pink-600 bg-[length:200%_auto] hover:bg-right transition-all duration-500 overflow-hidden shadow-[0_0_20px_rgba(236,72,153,0.2)] border border-white/20"
+              >
+                <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <span className="relative z-10 text-[11px] md:text-sm font-black uppercase tracking-[0.4em] text-white transition-colors">Invoke Joy</span>
+              </motion.button>
+            </div>
+          </div>
         </div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2.5, duration: 1 }}
+          className="absolute bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 md:gap-6 opacity-30"
+        >
+          <span className="text-[8px] md:text-[9px] uppercase tracking-[1em]">The Exhibition</span>
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            <ChevronDown size={14} />
+          </motion.div>
+        </motion.div>
       </section>
 
-      {/* Memories Section */}
-      <section id="memories" className="py-32 px-4 max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-24"
-        >
-          <h2 className="text-5xl md:text-7xl premium-text mb-6 font-black">Captured Moments</h2>
-          <div className="h-2 w-24 bg-purple-600 mx-auto rounded-full mb-4" />
-          <p className="text-gray-400 font-medium uppercase tracking-[0.3em]">The best is yet to come</p>
-        </motion.div>
+      {/* Gallery Section */}
+      <section id="memories" className="py-32 md:py-64 p-6 overflow-hidden">
+        <div className="max-w-[1600px] mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-0 relative">
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 sm:gap-16">
-          {[
-            { url: 'https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800&auto=format&fit=crop', title: 'Sweeter than honey', rotate: -3 },
-            { url: 'https://images.unsplash.com/photo-1530103043960-ef38714abb15?w=800&auto=format&fit=crop', title: 'Unforgettable vibes', rotate: 2 },
-            { url: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop', title: 'Pure happiness', rotate: -2 }
-          ].map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 50, rotate: 0 }}
-              whileInView={{ opacity: 1, y: 0, rotate: item.rotate }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.2, duration: 0.8 }}
-              whileHover={{ y: -20, rotate: 0, scale: 1.02, zIndex: 10 }}
-              className="bg-white p-4 pb-12 shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-sm border border-gray-100 flex flex-col gap-4 group cursor-pointer"
-            >
-              <div className="relative overflow-hidden aspect-square">
+            {/* Column 1 */}
+            <div className="md:col-span-5 md:pt-32">
+              <motion.div
+                style={{ y: typeof window !== 'undefined' && window.innerWidth > 768 ? y : 0 }}
+                className="relative aspect-[3/4] w-full bg-white/5 overflow-hidden group border border-white/10 rounded-[2.5rem]"
+              >
                 <img
-                  src={item.url}
-                  alt={item.title}
-                  className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110"
+                  src={img0}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                  alt="Memory 1"
                 />
-                <div className="absolute inset-0 bg-purple-900/10 group-hover:bg-transparent transition-colors duration-500" />
+                <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8 text-white z-10">
+                  <span className="text-[9px] md:text-[10px] uppercase tracking-[0.4em] opacity-50 block mb-1 md:mb-2">Scene 01</span>
+                  <p className="text-2xl md:text-3xl font-serif italic">Pure Delicacy</p>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Middle text */}
+            <div className="md:col-span-2 flex items-center justify-center p-6 md:p-12">
+              <div className="md:rotate-90">
+                <span className="text-[9px] md:text-[10px] uppercase tracking-[1em] md:tracking-[1.5em] opacity-20 whitespace-nowrap">Archives of Elegance</span>
               </div>
-              <div>
-                <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1 italic">Memory #{i + 1}</p>
-                <p className="text-gray-900 font-serif text-2xl lowercase italic">"{item.title}"</p>
-              </div>
-            </motion.div>
-          ))}
+            </div>
+
+            {/* Column 2 */}
+            <div className="md:col-span-5">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="relative aspect-[4/5] w-full bg-white/5 overflow-hidden group border border-white/10 rounded-[2.5rem]"
+              >
+                <img
+                  src={img1}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                  alt="Memory 2"
+                />
+                <div className="absolute top-6 right-6 md:top-8 md:right-8 text-right z-10">
+                  <span className="text-[9px] md:text-[10px] uppercase tracking-[0.4em] opacity-50 block mb-1 md:mb-2">Scene 02</span>
+                  <p className="text-2xl md:text-3xl font-serif italic">Golden Hours</p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="mt-16 md:mt-24 md:ml-[-20%] relative aspect-video md:w-[120%] bg-white/5 overflow-hidden group border border-white/10 rounded-[2.5rem]"
+              >
+                <img
+                  src={img2}
+                  className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-all duration-1000 group-hover:scale-110"
+                  alt="Memory 3"
+                />
+                <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8 z-10">
+                  <span className="text-[9px] md:text-[10px] uppercase tracking-[0.4em] opacity-50 block mb-1 md:mb-2">Scene 03</span>
+                  <p className="text-2xl md:text-4xl font-serif italic">Infinite Vibe</p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                className="mt-16 md:mt-24 relative aspect-square w-full md:w-[80%] ml-auto bg-white/5 overflow-hidden group border border-white/10 rounded-[2.5rem]"
+              >
+                <img
+                  src={img3}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                  alt="Memory 4"
+                />
+                <div className="absolute bottom-6 right-6 md:bottom-8 md:right-8 text-right z-10">
+                  <span className="text-[9px] md:text-[10px] uppercase tracking-[0.4em] opacity-50 block mb-1 md:mb-2">Scene 04</span>
+                  <p className="text-2xl md:text-3xl font-serif italic">Divine Essence</p>
+                </div>
+              </motion.div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Message Section */}
-      <section id="wishes">
-        <Envelope message="May your year be filled with as much joy as you bring to everyone around you! You deserve the world and more. ❤️" />
+      <section id="wishes" className="py-32 md:py-64 bg-black/40 backdrop-blur-xl">
+        <Envelope message="May your year be as extraordinary as your soul. Happy Birthday, Aramide! ❤️" />
       </section>
 
-      {/* Footer */}
-      <footer className="py-32 text-center bg-[#fafafa] relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-100 rounded-full blur-[100px] opacity-20" />
+      {/* Final Footer */}
+      <footer className="py-32 md:py-48 text-center relative">
+        <div className="max-w-4xl mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            className="mb-12"
+          >
+            <Heart size={32} className="text-pink-500 mx-auto mb-8 md:mb-12 stroke-[1px]" />
+            <h2 className="text-4xl md:text-8xl font-black uppercase tracking-tighter mb-4 md:mb-8 italic font-serif">A Legacy of Joy.</h2>
+            <div className="w-12 md:w-16 h-px bg-white/20 mx-auto mb-6 md:mb-8" />
+            <p className="text-white/40 uppercase tracking-[0.6em] md:tracking-[0.8em] text-[8px] md:text-[10px]">Est. 2026 // For Aramide</p>
+          </motion.div>
         </div>
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          className="relative z-10"
-        >
-          <Heart className="mx-auto text-pink-500 mb-8 animate-pulse" fill="currentColor" size={40} />
-          <p className="text-gray-400 font-medium tracking-widest uppercase text-sm mb-4">Celebrated with Joy</p>
-          <div className="h-px w-12 bg-gray-200 mx-auto mb-8" />
-          <p className="text-gray-900 font-serif italic text-xl">For someone truly extraordinary.</p>
-        </motion.div>
       </footer>
 
-      {/* Feature Navigation */}
-      <nav className="fixed bottom-10 left-1/2 -translate-x-1/2 glass-card px-8 py-5 flex gap-12 items-center z-50 shadow-2xl border border-white/40">
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="flex flex-col items-center gap-2 text-purple-600 hover:scale-110 transition-transform group"
-        >
-          <PartyPopper size={26} className="group-hover:rotate-12 transition-transform" />
-          <span className="text-[10px] font-black uppercase tracking-widest">Main</span>
-        </button>
-        <button
-          onClick={() => document.getElementById('memories')?.scrollIntoView({ behavior: 'smooth' })}
-          className="flex flex-col items-center gap-2 text-gray-400 hover:text-purple-600 hover:scale-110 transition-all group"
-        >
-          <Calendar size={26} className="group-hover:-rotate-12 transition-transform" />
-          <span className="text-[10px] font-black uppercase tracking-widest">Gallery</span>
-        </button>
-        <button
-          onClick={() => document.getElementById('wishes')?.scrollIntoView({ behavior: 'smooth' })}
-          className="flex flex-col items-center gap-2 text-gray-400 hover:text-purple-600 hover:scale-110 transition-all group"
-        >
-          <MessageSquare size={26} className="group-hover:scale-110 transition-transform" />
-          <span className="text-[10px] font-black uppercase tracking-widest">Note</span>
-        </button>
+      {/* Navigation */}
+      <nav className="fixed bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-4 z-50 p-2 glass-card rounded-full border border-white/10 shadow-2xl">
+        {[
+          { id: 'top', icon: <PartyPopper size={18} /> },
+          { id: 'memories', icon: <Calendar size={18} /> },
+          { id: 'wishes', icon: <MessageSquare size={18} /> }
+        ].map((item) => (
+          <button
+            key={item.id}
+            onClick={() => item.id === 'top' ? window.scrollTo({ top: 0, behavior: 'smooth' }) : document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' })}
+            className="w-12 h-12 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-all"
+          >
+            {item.icon}
+          </button>
+        ))}
       </nav>
+
+      {/* Custom Scroll Progress */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-1 bg-pink-500 origin-left z-[100]"
+        style={{ scaleX: scrollYProgress }}
+      />
     </div>
   );
 }
